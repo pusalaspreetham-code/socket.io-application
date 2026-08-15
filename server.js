@@ -1,4 +1,6 @@
+require("dotenv").config();
 const express=require("express");
+const PORT = process.env.PORT || 3000;
 const http=require("http");
 const {Server}=require("socket.io");
 const pool=require("./config/db");
@@ -38,6 +40,7 @@ app.use(cookieParser());
 app.use(express.static("public"));
 app.set("io",io); //make io accessible to express routes
 app.use("/api",authRoutes,roomRoutes,messageRoutes);
-server.listen(3000,()=>{
-    console.log("server running");
-})
+
+server.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+});
