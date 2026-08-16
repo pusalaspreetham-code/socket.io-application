@@ -624,6 +624,9 @@
             <button onclick="joinRoom(${room.room_id}, '${room.name}')">
               Join
             </button>
+            <button onclick="deleteRoom('${room.name}')" style="background:linear-gradient(135deg, var(--danger), #d63447);">
+              Delete
+            </button>
           `
           roomlist.appendChild(div);
         })
@@ -649,6 +652,31 @@
           loadMessages(roomid)
         }
       }
+      async function deleteRoom(roomName){
+        const confirmed = window.confirm(`Delete room "${roomName}"? This cannot be undone.`);
+        if(!confirmed){
+          return;
+        }
+      
+        const response = await fetch("/api/delete-room",{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body: JSON.stringify({
+            name: roomName
+          })
+        });
+      
+        const data = await response.json();
+        console.log(data);
+      
+        if(response.ok){
+          loadRooms();
+        } else {
+          window.alert(data.message || "Failed to delete room");
+        }
+    }
       async function loadMessages(roomId) {
         const response = await fetch(`/api/${roomId}/messages`);
         const data = await response.json();

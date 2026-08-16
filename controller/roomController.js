@@ -70,8 +70,43 @@ async function getRooms(req,res){
         });
     }
 }
+
+async function deleteroom(req, res) {
+    try {
+        const { name } = req.body;
+        const userId = req.user;
+
+        const sql = `
+            DELETE FROM rooms
+            WHERE name = $1
+            AND created_by = $2
+            RETURNING *
+        `;
+
+        const result = await pool.query(sql, [name, userId]);
+
+        if (result.rows.length === 0) {
+            return res.status(404).json({
+                message: "Room not found or you are not the creator"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Room deleted successfully",
+            room: result.rows[0]
+        });
+
+    } catch (err) {
+        console.log(err);
+
+        return res.status(500).json({
+            message: "Internal server error"
+        });
+    }
+}
 module.exports={
     createRoom,
     joinRoom,
-    getRooms
+    getRooms,
+    deleteroom
 }
