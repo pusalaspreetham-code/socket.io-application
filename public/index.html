@@ -657,7 +657,7 @@
         if(!confirmed){
           return;
         }
-      
+
         const response = await fetch("/api/delete-room",{
           method:"POST",
           headers:{
@@ -729,7 +729,8 @@
         loadMessages(currentRoomId);
       }
       checkLogin();
-      loadRooms()
+      loadRooms();
+      window.location.reload();
     </script>
   </body>
 </html>
