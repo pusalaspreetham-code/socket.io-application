@@ -40,7 +40,10 @@ app.use(cookieParser());
 app.use(express.static("public"));
 app.set("io",io); //make io accessible to express routes
 app.use("/api",authRoutes,roomRoutes,messageRoutes);
-
+app.post("/api/logout", (req, res) => {
+  res.clearCookie("token", { path: "/" }); // use the SAME name you used when setting it
+  res.status(200).json({ message: "Logged out" });
+});
 server.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
 });

@@ -452,6 +452,10 @@
     </div>
     <div id="app-container" style="display:none;">
       <h2>Socket Chat</h2>
+      <button onclick="logout()" style="float:right; background:#eef0f9; color:var(--primary-dark); box-shadow:none;">Logout</button>
+
+      <input id="new-room-name" type="text" placeholder="New Room Name">
+      <button onclick="createRoom()">Create Room</button>
       <button onclick="loadRooms()">Refresh Rooms</button>
       <h3>Available Rooms</h3>
       <div id="room-list"></div>
@@ -512,6 +516,23 @@
           loadRooms();
         }
       }
+    async function logout(){
+      const response = await fetch("/api/logout", {
+        method: "POST"
+      });
+    
+      if (response.ok) {
+        currentRoomId = null;
+        document.getElementById("chat-container").style.display = "none";
+        document.getElementById("app-container").style.display = "none";
+        document.getElementById("login-container").style.display = "block";
+        document.getElementById("login-username").value = "";
+        document.getElementById("login-password").value = "";
+        document.getElementById("login-message").innerText = "";
+      } else {
+        window.alert("Logout failed, please try again");
+      }
+    }
       function showRegisterForm(){
         const registerContainer =
           document.getElementById("register-container");
@@ -562,6 +583,33 @@
         window.alert("Registered successfully, please login");
       }
 
+      async function createRoom(){
+        const roomName = document.getElementById("new-room-name").value.trim();
+
+        if(!roomName){
+          window.alert("Please enter a room name");
+          return;
+        }
+
+        const response = await fetch("/api/create-room",{
+          method:"POST",
+          headers:{
+            "Content-Type":"application/json"
+          },
+          body: JSON.stringify({
+            name:roomName
+          })
+        });
+
+        const data = await response.json();
+
+        console.log(data);
+
+        if(response.ok){
+          document.getElementById("new-room-name").value = "";
+          loadRooms();
+        }
+      }
       async function loadRooms(){
         const response=await fetch('/api/get-rooms')
         const data=await response.json();
@@ -650,6 +698,7 @@
         if(response.ok){
           input.value = "";
         }
+        loadMessages(currentRoomId);
       }
       checkLogin();
     </script>
