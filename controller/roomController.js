@@ -55,11 +55,10 @@ async function getRooms(req,res){
         const sql=`
             SELECT room_id, name, created_by, created_at, users
             FROM rooms
-            WHERE $1 = ANY(users)
             ORDER BY created_at DESC
         `;
 
-        const result=await pool.query(sql,[req.user]);
+        const result=await pool.query(sql);
 
         return res.status(200).json({
             message:result.rows
